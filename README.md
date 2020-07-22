@@ -25,5 +25,7 @@ Input parameters include the following to be defined for each local site,
 5. coinstac-simulator
 
 ## References:
-[1]. https://github.com/TomMaullin/BLMM
-[2]. BLMM notes by Tom Maullin
+
+> [1]. https://github.com/TomMaullin/BLMM
+
+> [2]. BLMM notes by Tom Maullin
