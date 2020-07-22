@@ -122,7 +122,7 @@
                           "dof": {"label": "Degrees of Freedom","type": "number"},
                           "fstat": {"label": "F-Statistic","type": "number"},
                           "pvalue": {"label": "P-Value","type": "number"},
-                          "r2": {"label": "RSquared","type": "number"}
+                          "rsquared": {"label": "RSquared","type": "number"}
                         }
                       }
                     }
@@ -143,9 +143,8 @@
                 "type": "object",
                 "items": 
                 {
-                  "beta_vector": {"label": "Beta Vector","type": "array"},
-                  "sigma2": {"label": "Sigma2","type": "array"},
-                  "D_vector": {"label": "D Vector","type": "array"}
+                  "sigmasquared": {"label": "sigmasquared","type": "array"},
+                  "CovRandomEffects": {"label": "CovRandomEffects","type": "array"}
                 }
               },
               "inference_statistics": 
@@ -171,9 +170,9 @@
                         {
                           "name" : {"label": "Contrast Name","type": "string"},
                           "vector": {"label": "Contrast Vector","type": "array"},
-                          "lbeta": {"label": "LBeta","type": "number"},
-                          "selbeta": {"label": "SELBeta","type": "number"},
-                          "dof": {"label": "DOF","type": "number"},
+                          "beta": {"label": "Beta","type": "number"},
+                          "stderrorbeta": {"label": "StdErrorBeta","type": "number"},
+                          "dof": {"label": "Degrees of Freedom","type": "number"},
                           "tstat": {"label": "T-Statistic","type": "number"},
                           "pvalue": {"label": "P-Value","type": "number"}
                         }
@@ -186,10 +185,10 @@
                         {
                           "name" : {"label": "Contrast Name","type": "string"},
                           "vector": {"label": "Contrast Vector","type": "array"},
-                          "dof": {"label": "DOF","type": "number"},
+                          "dof": {"label": "Degrees of Freedom","type": "number"},
                           "fstat": {"label": "F-Statistic","type": "number"},
                           "pvalue": {"label": "P-Value","type": "number"},
-                          "r2": {"label": "R2 Statistic","type": "number"}
+                          "rsquared": {"label": "RSquared","type": "number"}
                         }
                       }
                     }
