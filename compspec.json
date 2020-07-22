@@ -1,0 +1,205 @@
+{
+  "meta": {
+    "name": "decentralized linear mixed effects model - freesurfer",
+    "id": "dlme_fs",
+    "version": "v1.0.0",
+    "repository": "https:\/\/github.com\/trendscenter\/coinstc-LME-Freesurfer",
+    "description": "decentralized linear mixed effects model for freesurfer data"
+  },
+  "computation": 
+  {
+    "type": "docker",
+    "dockerImage": "dlme_fs",
+    "command": ["python","\/computation\/scripts\/local.py"],
+    "remote": 
+    {
+      "type": "docker",
+      "dockerImage": "mv_dlme_fs_test",
+      "command": ["python","\/computation\/scripts\/remote.py"]
+    },
+    "input": 
+    {
+      "fixed_covariates": 
+      {
+        "label":"fixed_covariates",
+        "type":"string",
+        "items":["fixed_effects"],
+        "extensions":["csv"]
+      },
+      "random_covariates":
+      {
+        "label":"random_covariates",
+        "type":"string",
+        "items":["random_effects"],
+        "extensions":["csv"]
+      },
+      "dependents":
+      {
+        "label":"dependents",
+        "type":"string",
+        "items":["freesurfer"],
+        "extensions":[["csv","txt"]]
+      },
+      "freesurfer_variables":
+      {
+        "label":"freesurfer_variables",
+        "type":"array"
+      },
+      "contrasts":
+      {
+        "label":"contrasts",
+        "type": "array",
+        "items": 
+        {
+          "name": {"label":"name","type":"string"},
+          "vector": {"label":"vector","type":"array"}
+        }
+      }
+    },
+    "output": 
+    {
+      "regressions": 
+      {
+        "label": "Regressions",
+        "type": "array",
+        "items": 
+        {
+          "ROI": {"label": "Region of Interest","type": "string"},
+          "global_stats": 
+          {
+            "label": "Global Stats",
+            "type": "object",
+            "items": 
+            {
+              "parameter_estimates": 
+              {
+                "label": "Parameter Estimates",
+                "type": "object",
+                "items": 
+                {
+                  "sigmasquared": {"label": "sigmasquared","type": "array"},
+                  "CovRandomEffects": {"label": "CovRandomEffects","type": "array"}
+                }
+              },
+              "inference_statistics": 
+              {
+                "label": "Inference Statistics",
+                "type": "object",
+                "items": 
+                {
+                  "llh": {"label": "Log Likelihood","type": "number"},
+                  "resms": {"label": "Residual Mean Squares","type": "number"},
+                  "covB": {"label": "Covariance of Beta","type": "array"},
+                  "contrasts":
+                  {
+                    "label": "Contrasts",
+                    "type": "object",
+                    "items": 
+                    {
+                      "T-Contrasts":
+                      {
+                        "label": "T-Contrasts",
+                        "type": "array",
+                        "items":
+                        {
+                          "name" : {"label": "Contrast Name","type": "string"},
+                          "vector": {"label": "Contrast Vector","type": "array"},
+                          "beta": {"label": "Beta","type": "number"},
+                          "stderrorbeta": {"label": "StdErrorBeta","type": "number"},
+                          "dof": {"label": "Degrees of Freedom","type": "number"},
+                          "tstat": {"label": "T-Statistic","type": "number"},
+                          "pvalue": {"label": "P-Value","type": "number"}
+                        }
+                      },
+                      "F-Contrasts":
+                      {
+                        "label": "F-Contrasts",
+                        "type": "array",
+                        "items":
+                        {
+                          "name" : {"label": "Contrast Name","type": "string"},
+                          "vector": {"label": "Contrast Vector","type": "array"},
+                          "dof": {"label": "Degrees of Freedom","type": "number"},
+                          "fstat": {"label": "F-Statistic","type": "number"},
+                          "pvalue": {"label": "P-Value","type": "number"},
+                          "r2": {"label": "RSquared","type": "number"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "local_stats": 
+          {
+            "label": "Local Stats",
+            "type": "object",
+            "items":
+            {
+              "parameter_estimates": 
+              {
+                "label": "Parameter Estimates",
+                "type": "object",
+                "items": 
+                {
+                  "beta_vector": {"label": "Beta Vector","type": "array"},
+                  "sigma2": {"label": "Sigma2","type": "array"},
+                  "D_vector": {"label": "D Vector","type": "array"}
+                }
+              },
+              "inference_statistics": 
+              {
+                "label": "Inference Statistics",
+                "type": "object",
+                "items": 
+                {
+                  "llh": {"label": "Log Likelihood","type": "number"},
+                  "resms": {"label": "Residual Mean Squares","type": "number"},
+                  "covB": {"label": "Covariance of Beta","type": "array"},
+                  "contrasts":
+                  {
+                    "label": "Contrasts",
+                    "type": "object",
+                    "items": 
+                    {
+                      "T-Contrasts":
+                      {
+                        "label": "T-Contrasts",
+                        "type": "array",
+                        "items":
+                        {
+                          "name" : {"label": "Contrast Name","type": "string"},
+                          "vector": {"label": "Contrast Vector","type": "array"},
+                          "lbeta": {"label": "LBeta","type": "number"},
+                          "selbeta": {"label": "SELBeta","type": "number"},
+                          "dof": {"label": "DOF","type": "number"},
+                          "tstat": {"label": "T-Statistic","type": "number"},
+                          "pvalue": {"label": "P-Value","type": "number"}
+                        }
+                      },
+                      "F-Contrasts":
+                      {
+                        "label": "F-Contrasts",
+                        "type": "array",
+                        "items":
+                        {
+                          "name" : {"label": "Contrast Name","type": "string"},
+                          "vector": {"label": "Contrast Vector","type": "array"},
+                          "dof": {"label": "DOF","type": "number"},
+                          "fstat": {"label": "F-Statistic","type": "number"},
+                          "pvalue": {"label": "P-Value","type": "number"},
+                          "r2": {"label": "R2 Statistic","type": "number"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

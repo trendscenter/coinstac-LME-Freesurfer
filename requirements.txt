@@ -1,0 +1,3 @@
+scipy
+statsmodels
+nibabel
