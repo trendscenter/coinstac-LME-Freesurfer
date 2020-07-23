@@ -14,7 +14,8 @@ import npMatrix3d
 import time
 import pandas as pd
 from scipy.linalg import block_diag
-import lme_utils
+from lme_utils import *
+from data_utils import *
 import itertools
 
 """
@@ -108,20 +109,23 @@ And gives the following output:
 ============================================================================
 """
 def remote_1(args):
-
+    state_list = args['state']
     input_list = args['input']
     cache_list = args['cache']
+    input_dir = state_list["baseDirectory"]
 
     prod_matrices = ['XtransposeX_local','XtransposeY_local','XtransposeZ_local',
                     'YtransposeX_local','YtransposeY_local','YtransposeZ_local',
                     'ZtransposeX_local','ZtransposeY_local','ZtransposeZ_local']
-
     prod_matrices_vars=[]
     for p in prod_matrices:
         temp=0
         for site in input_list:
-            temp=temp+np.array(input_list[site][p])
+            temp=temp+np.array(loadBin(os.path.join(input_dir,
+                                site,input_list[site][p])))
+
         prod_matrices_vars.append(temp)
+
     XtX = prod_matrices_vars[0]
     XtY = prod_matrices_vars[1]
     XtZ = prod_matrices_vars[2]
@@ -143,7 +147,7 @@ def remote_1(args):
     
     nfixeffs = np.shape(XtX)[1]
     ndepvars = np.shape(XtY)[0]
-    [beta,sigma2,vechD,D] = lme_utils.get_parameterestimates(paramVec,nfixeffs,ndepvars,
+    [beta,sigma2,vechD,D] = get_parameterestimates(paramVec,nfixeffs,ndepvars,
                                                                 nlevels_global,nraneffs)
                                                                 
     prod_matrices = [XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ]
@@ -153,7 +157,7 @@ def remote_1(args):
                                                         nfixeffs,ndepvars,nlevels_global,
                                                         nraneffs,beta,sigma2,D,con)
 
-    global_dict_list = lme_utils.gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,
+    global_dict_list = gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,
                                                     tstats,fstats,ndepvars)
 
     paramVec_local = [input_list[site]['paramVec_local'] for site in input_list]
@@ -164,7 +168,7 @@ def remote_1(args):
 
     keys = ["ROI", "global_stats", "local_stats"]
     fs_vars = input_list[sites[0]]['fs_vars']
-    dict_list = lme_utils.get_stats_to_dict(keys,fs_vars,global_dict_list, local_dict)
+    dict_list = get_stats_to_dict(keys,fs_vars,global_dict_list, local_dict)
 
     output_dict = {"regressions": dict_list}
     computation_output_dict = {"output": output_dict, "success": True}

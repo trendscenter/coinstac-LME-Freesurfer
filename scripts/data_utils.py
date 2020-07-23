@@ -35,3 +35,8 @@ def list_recursive(d, key):
                 yield found
         if k == key:
             yield v
+
+def get_stats_to_dict(a, *b):
+    df = pd.DataFrame(list(zip(*b)), columns=a)
+    dict_list = df.to_dict(orient='records')
+    return dict_list

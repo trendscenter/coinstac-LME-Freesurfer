@@ -12,7 +12,8 @@ import sys
 import regression as reg
 import warnings
 from itertools import chain
-import lme_utils
+from lme_utils import *
+from data_utils import *
 import csv
 import os
 import pandas as pd
@@ -80,9 +81,9 @@ def local_0(args):
     rf = input_list['random_factor']
     rc = input_list['random_covariates']
 
-    [X,Y,Z,ranfac,raneffs] = lme_utils.form_XYZMatrices(inputdir,fc,fs_vars,dep,rf,rc)
+    [X,Y,Z,ranfac,raneffs] = form_XYZMatrices(inputdir,fc,fs_vars,dep,rf,rc)
 
-    XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ = lme_utils.prodMats3D(X,Y,Z)
+    XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ = prodMats3D(X,Y,Z)
     
     n = len(X)
     nlevels = np.array([np.shape(Z)[1]])
@@ -92,14 +93,18 @@ def local_0(args):
     
     nfixeffs = np.shape(X)[1]
     ndepvars = np.shape(YtX)[0]
-    [beta,sigma2,vechD,D] = lme_utils.get_parameterestimates(paramVec,nfixeffs,ndepvars,nlevels,nraneffs)
+    [beta,sigma2,vechD,D] = get_parameterestimates(paramVec,nfixeffs,ndepvars,nlevels,nraneffs)
     
     contrasts=input_list['contrasts']
     prod_matrices = [XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ]
     [llh,resms,covB,tstats,fstats] = reg.cal_inference(prod_matrices,n,nfixeffs,ndepvars,nlevels,
                                                         nraneffs,beta,sigma2,D,contrasts)
 
-    dict_list = lme_utils.gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars)
+    dict_list = gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars)
+
+    # Writing covariates and dependents to cache as files
+    saveBin(os.path.join(cache_dir, 'X.npy'), X)
+    saveBin(os.path.join(cache_dir, 'Y.npy'), Y)
 
     computation_output_dict = {
         'output': 
@@ -110,8 +115,8 @@ def local_0(args):
         },
         'cache': 
         {
-            'X': X,
-            'Y': Y,
+            'X': 'X.npy',
+            'Y': 'Y.npy',
             'fs_vars': fs_vars,
             'ranfac': ranfac.tolist(),
             'raneffs': raneffs,
@@ -171,8 +176,8 @@ def local_1(args):
     cache_list = args['cache']
     input_list = args['input']
 
-    X = cache_list['X']
-    Y = cache_list['Y']
+    X = loadBin(os.path.join(cache_dir, cache_list['X']))
+    Y = loadBin(os.path.join(cache_dir, cache_list['Y']))
     ranfac = cache_list['ranfac']
     raneffs = cache_list['raneffs']
 
@@ -182,21 +187,27 @@ def local_1(args):
     nlocalsites = input_list['nlocalsites']
     clientId = args['state']['clientId']
 
-    Z = lme_utils.form_globalZMatrix(nlevels_persite,nlevels_global,nlocalsites,clientId,ranfac,raneffs)
+    Z = form_globalZMatrix(nlevels_persite,nlevels_global,nlocalsites,clientId,ranfac,raneffs)
 
-    XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ = lme_utils.prodMats3D(X,Y,Z)
+    XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ = prodMats3D(X,Y,Z)
+
+    prod_matrices = [XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ]
+    prod_matrices_name = ['XtX','XtY','XtZ','YtX','YtY','YtZ','ZtX','ZtY','ZtZ']
+
+    for p in range(len(prod_matrices)):
+        saveBin(os.path.join(transfer_dir, prod_matrices_name[p]+'.npy'),prod_matrices[p])
 
     computation_output_dict = {
         'output': {
-            'XtransposeX_local': XtX.tolist(),
-            'XtransposeY_local': XtY.tolist(),
-            'XtransposeZ_local': XtZ.tolist(),
-            'YtransposeX_local': YtX.tolist(),
-            'YtransposeY_local': YtY.tolist(),
-            'YtransposeZ_local': YtZ.tolist(),
-            'ZtransposeX_local': ZtX.tolist(),
-            'ZtransposeY_local': ZtY.tolist(),
-            'ZtransposeZ_local': ZtZ.tolist(),
+            'XtransposeX_local': 'XtX.npy',
+            'XtransposeY_local': 'XtY.npy',
+            'XtransposeZ_local': 'XtZ.npy',
+            'YtransposeX_local': 'YtX.npy',
+            'YtransposeY_local': 'YtY.npy',
+            'YtransposeZ_local': 'YtZ.npy',
+            'ZtransposeX_local': 'ZtX.npy',
+            'ZtransposeY_local': 'ZtY.npy',
+            'ZtransposeZ_local': 'ZtZ.npy',
             'contrasts': cache_list['contrasts'],
             'paramVec_local': cache_list['paramVec_local'],
             'fs_vars': cache_list['fs_vars'],
@@ -210,7 +221,7 @@ if __name__ == '__main__':
 
     parsed_args = json.loads(sys.stdin.read())
 
-    phase_key = list(lme_utils.list_recursive(parsed_args, 'computation_phase'))
+    phase_key = list(list_recursive(parsed_args, 'computation_phase'))
 
     if not phase_key:
         computation_output = local_0(parsed_args)

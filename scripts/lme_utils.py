@@ -9,26 +9,13 @@ import npMatrix3d
 import pandas as pd
 import os
 import itertools
+from data_utils import *
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     import statsmodels.api as sm
 
 np.set_printoptions(threshold=sys.maxsize)
-
-def list_recursive(d, key):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            for found in list_recursive(v, key):
-                yield found
-        if k == key:
-            yield v
-
-def get_stats_to_dict(a, *b):
-
-    df = pd.DataFrame(list(zip(*b)), columns=a)
-    dict_list = df.to_dict(orient='records')
-    return dict_list
 
 '''
 =============================================================================
