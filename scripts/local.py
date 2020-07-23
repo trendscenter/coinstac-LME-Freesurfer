@@ -73,7 +73,10 @@ And gives the following output:
 def local_0(args):
     
     input_list = args['input']
-    inputdir = args['state']['baseDirectory']
+    state_list = args['state']
+
+    inputdir = state_list['baseDirectory']
+    cache_dir = state_list["cacheDirectory"]
 
     fc = input_list['fixed_covariates']
     fs_vars = input_list['freesurfer_variables']
@@ -103,6 +106,8 @@ def local_0(args):
     dict_list = gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars)
 
     # Writing covariates and dependents to cache as files
+    X=np.array(X)
+    Y=np.array(Y)
     saveBin(os.path.join(cache_dir, 'X.npy'), X)
     saveBin(os.path.join(cache_dir, 'Y.npy'), Y)
 
@@ -175,9 +180,14 @@ def local_1(args):
     
     cache_list = args['cache']
     input_list = args['input']
+    state_list = args['state']
+
+    cache_dir = state_list["cacheDirectory"]
+    transfer_dir = state_list["transferDirectory"]
 
     X = loadBin(os.path.join(cache_dir, cache_list['X']))
     Y = loadBin(os.path.join(cache_dir, cache_list['Y']))
+
     ranfac = cache_list['ranfac']
     raneffs = cache_list['raneffs']
 

@@ -3,6 +3,7 @@
 
 import os
 import numpy as np
+import pandas as pd
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")

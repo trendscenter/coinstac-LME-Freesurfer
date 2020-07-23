@@ -112,6 +112,7 @@ def remote_1(args):
     state_list = args['state']
     input_list = args['input']
     cache_list = args['cache']
+    
     input_dir = state_list["baseDirectory"]
 
     prod_matrices = ['XtransposeX_local','XtransposeY_local','XtransposeZ_local',
