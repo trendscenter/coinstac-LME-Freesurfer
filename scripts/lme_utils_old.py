@@ -26,7 +26,7 @@ It takes as inputs:
 - inputdir: base directory containing input csv files.
 - fc: csv file containing fixed covariates, each row for an observation
 - fs_vars: freesurfer regions to be used as response/dependent variables
-- dep : csv file containing list of freesurfer stats file, each row for an
+- dep : csv file containing list of freesurfer stats file, each row for an 
 observation
 - rf : csv file containing random factor levels for each observation (contains
 one column as only 1 random factor)
@@ -43,35 +43,49 @@ It returns as outputs:
 '''
 def form_XYZMatrices(inputdir,fc,fs_vars,dep,rf,rc):
 
-    data_f = fc
-
+    data_f = pd.read_csv(os.path.join(inputdir,fc))
+    covariates=[]
+    covariates.extend(['const'])
+    covariates.extend(list(data_f.columns))
+    
+    data_f['isControl'] = data_f['isControl']*1
+    cols_categorical = [col for col in data_f if data_f[col].dtype == object]
+    cols_mono = [col for col in data_f if data_f[col].nunique() == 1]
+    
+    # Dropping columsn with unique values
+    data_f = data_f.drop(columns=cols_mono)
+    
+    # Creating dummies on non-unique categorical variables
+    cols_nodrop = set(cols_categorical) - set(cols_mono)
+    data_f = pd.get_dummies(data_f, columns=cols_nodrop, drop_first=True)
+    
     data_f = data_f.dropna(axis=0, how='any')
     data_f = data_f.to_numpy()
 
-    X = data_f
+    X = sm.add_constant(data_f)
     X = X.tolist()
-
     n=len(X)
-
-    files = dep
-
+    
+    files = pd.read_csv(os.path.join(inputdir,dep))
+    files = files.to_numpy()
     Y=[]
     for f in files:
-        y = pd.read_csv(os.path.join(inputdir,f),delimiter="\t")
+        y = pd.read_csv(os.path.join(inputdir,f[0]),delimiter="\t")
         y1=y[y[y.columns[0]].isin(fs_vars)]
         y1=y1[y.columns[1]].to_list()
         Y.append(y1)
 
-    ranfac = rf
+    ranfac = pd.read_csv(os.path.join(inputdir,rf))
+    ranfac = ranfac.to_numpy()
     nlevels = np.max(ranfac)
 
-    raneffs = rc
+    raneffs = pd.read_csv(os.path.join(inputdir,rc))
+    raneffs = raneffs[raneffs.columns[0]].tolist()
 
     Z = np.zeros([n, nlevels], dtype=int)
-
     for i in range(n):
-        Z[i][ranfac[i]-1] = raneffs[i]
-
+        Z[i][ranfac[i][0]-1] = raneffs[i]
+    
     return(X,Y,Z,ranfac,raneffs)
 
 '''
@@ -105,7 +119,7 @@ def prodMats3D(X,Y,Z):
     Y1[:,:,0]=Y
     Y=Y1
     Z=np.array(Z)
-
+    
     # Work out the product matrices (non spatially varying)
     XtX = (X.transpose() @ X).reshape(1, X.shape[1], X.shape[1])
     XtY = X.transpose() @ Y
@@ -115,14 +129,14 @@ def prodMats3D(X,Y,Z):
     YtZ = Y.transpose(0,2,1) @ Z
     ZtX = XtZ.transpose(0,2,1)
     ZtY = YtZ.transpose(0,2,1)
-    ZtZ = (Z.transpose() @ Z).reshape(1, Z.shape[1], Z.shape[1])
+    ZtZ = (Z.transpose() @ Z).reshape(1, Z.shape[1], Z.shape[1])    
 
     # Return product matrices
     return(XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ)
 
 '''
 =============================================================================
-The below function extracts the parameters estimated in LME from paramVec and
+The below function extracts the parameters estimated in LME from paramVec and 
 reconstructs D .
 -----------------------------------------------------------------------------
 It takes as inputs:
@@ -147,7 +161,7 @@ def get_parameterestimates(paramVec,p,v,nlevels,nraneffs):
 
      # Output beta estimate
     beta = paramVec[:, 0:p]
-
+    
     # Output sigma2 estimate
     sigma2 = paramVec[:,p:(p+1),:]
 
@@ -160,7 +174,7 @@ def get_parameterestimates(paramVec,p,v,nlevels,nraneffs):
     # D as a dictionary
 
     Ddict[0] = npMatrix3d.vech2mat3D(paramVec[:,IndsDk[0]:IndsDk[1],:])
-
+    
     # Full version of D
     D = npMatrix3d.getDfromDict3D(Ddict, nraneffs, nlevels)
 
@@ -173,7 +187,7 @@ effects from all local sites.
 -----------------------------------------------------------------------------
 It takes as inputs:
 -----------------------------------------------------------------------------
-- nlevels_persite : list containing number of levels of random factor for
+- nlevels_persite : list containing number of levels of random factor for 
     each site
 - nlevels_global : total levels summed up for all local sites
 - nlocalsites : number of local sites
@@ -200,11 +214,11 @@ def form_globalZMatrix(nlevels_persite,nlevels_global,nlocalsites,clientId,ranfa
             else:
                 for i in range(s):
                     col_start = col_start+nlevels_persite[i]
-
-
+    
+    
     ranfac = np.array(ranfac)
     for i in range(n):
-        Z[i][col_start+ranfac[i]-1] = raneffs[i]
+        Z[i][col_start+ranfac[i][0]-1] = raneffs[i]
 
     return(Z)
 
@@ -219,7 +233,7 @@ each of the stats contains
     sigma2
     vechD
 - inference stats
-    llh :
+    llh : 
     resms
     covB
     tstats
@@ -227,7 +241,7 @@ each of the stats contains
 -----------------------------------------------------------------------------
 It takes as inputs:
 -----------------------------------------------------------------------------
-- nlevels_persite : list containing number of levels of random factor for
+- nlevels_persite : list containing number of levels of random factor for 
     each site
 - nlevels_global : total levels summed up for all local sites
 - nlocalsites : number of local sites
@@ -247,10 +261,10 @@ def gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars):
     vechD_output = [list(itertools.chain.from_iterable(vechD[i])) for i in range(ndepvars)]
     sigma2_output = [sigma2_output[i][0] for i in range(ndepvars)]
     vechD_output = [vechD_output[i][0] for i in range(ndepvars)]
-
-    dict_list1 = get_stats_to_dict(param_estimates_keys,
+    
+    dict_list1 = get_stats_to_dict(param_estimates_keys, 
                                     sigma2_output,vechD_output)
-
+    
     param_estimates_keys = ['Contrast Name', 'Contrast Vector', 'Beta','StdErrorBeta',
                             'Degrees of Freedom','T-Statistic','P-value']
     tcon_dict_list_fsregs = []
@@ -258,7 +272,7 @@ def gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars):
         tcon_dict_list = []
         for c in range(len(tstats)):
             Lbeta_output = list(itertools.chain.from_iterable(tstats[c][2][0][r]))
-            tcon_dict = get_stats_to_dict(param_estimates_keys,
+            tcon_dict = get_stats_to_dict(param_estimates_keys, 
                                 [tstats[c][0]],[tstats[c][1]],
                                 Lbeta_output,[tstats[c][2][1][r]],
                                 [tstats[c][2][2][r]],[tstats[c][2][3][r]],
@@ -272,7 +286,7 @@ def gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars):
     for r in range(ndepvars):
         fcon_dict_list = []
         for c in range(len(fstats)):
-            fcon_dict = get_stats_to_dict(param_estimates_keys,
+            fcon_dict = get_stats_to_dict(param_estimates_keys, 
                                 [fstats[c][0]],[fstats[c][1]],
                                 [fstats[c][2][0][r]],[fstats[c][2][1][r]],
                                 [fstats[c][2][2][r]],[fstats[c][2][3][r]])
@@ -281,7 +295,7 @@ def gen_compoutputdict(beta,sigma2,vechD,llh,resms,covB,tstats,fstats,ndepvars):
 
     param_estimates_keys = ['Log-likelihood', 'ResidualMeanSquares', 'CovBeta',
                             'T-Contrasts', 'F-Contrasts']
-    dict_list2 = get_stats_to_dict(param_estimates_keys,llh,resms,covB,
+    dict_list2 = get_stats_to_dict(param_estimates_keys,llh,resms,covB, 
                             tcon_dict_list_fsregs,fcon_dict_list_fsregs)
 
     param_estimates_keys = ['Parameter Estimates', 'Inference Statistics']

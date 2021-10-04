@@ -1,91 +1,138 @@
 {
   "meta": {
-    "name": "decentralized linear mixed effects model - freesurfer",
-    "id": "dlme_fs",
+    "name": "Decentralized Linear Mixed Effects Model - Freesurfer",
+    "id": "dlme-fs",
     "version": "v1.0.0",
     "repository": "https:\/\/github.com\/trendscenter\/coinstc-LME-Freesurfer",
-    "description": "decentralized linear mixed effects model for freesurfer data"
+    "description": "Decentralized linear mixed effects model for Freesurfer data"
   },
-  "computation": 
+  "computation":
   {
     "type": "docker",
-    "dockerImage": "dlme_fs",
+    "dockerImage": "coinstacteam/dlme-fs",
     "command": ["python","\/computation\/scripts\/local.py"],
-    "remote": 
+    "remote":
     {
       "type": "docker",
-      "dockerImage": "mv_dlme_fs_test",
+      "dockerImage": "coinstacteam/dlme-fs",
       "command": ["python","\/computation\/scripts\/remote.py"]
     },
-    "input": 
+    "input":
     {
-      "fixed_covariates": 
-      {
-        "label":"fixed_covariates",
-        "type":"string",
-        "items":["fixed_effects"],
-        "extensions":["csv"]
+      "covariates": {
+        "label": "Covariates",
+        "type": "csv",
+        "items": ["boolean", "number"],
+        "source": "member",
+        "order": 0
       },
-      "random_covariates":
-      {
-        "label":"random_covariates",
-        "type":"string",
-        "items":["random_effects"],
-        "extensions":["csv"]
+      "data": {
+        "label": "Data",
+        "type": "freesurfer",
+        "items": ["FreeSurfer"],
+        "extensions": ["csv", "txt"],
+        "source": "owner",
+        "order": 1
       },
-      "dependents":
-      {
-        "label":"dependents",
-        "type":"string",
-        "items":["freesurfer"],
-        "extensions":[["csv","txt"]]
-      },
-      "freesurfer_variables":
-      {
-        "label":"freesurfer_variables",
-        "type":"array"
-      },
-      "contrasts":
-      {
+      "contrasts": {
         "label":"contrasts",
-        "type": "array",
-        "items": 
-        {
-          "name": {"label":"name","type":"string"},
-          "vector": {"label":"vector","type":"array"}
-        }
+        "type": "object",
+        "default": [
+           {
+              "name":{
+                 "value":"contrast1"
+              },
+              "vector":{
+                 "value":[
+                    1,
+                    0,
+                    0
+                 ]
+              }
+           },
+           {
+              "name":{
+                 "value":"contrast2"
+              },
+              "vector":{
+                 "value":[
+                    0,
+                    1,
+                    0
+                 ]
+              }
+           },
+           {
+              "name":{
+                 "value":"contrast3"
+              },
+              "vector":{
+                 "value":[
+                    0,
+                    0,
+                    1
+                 ]
+              }
+           },
+           {
+              "name":{
+                 "value":"contrast4"
+              },
+              "vector":{
+                 "value":[
+                    [
+                       1,
+                       0,
+                       0
+                    ],
+                    [
+                       0,
+                       1,
+                       0
+                    ],
+                    [
+                       0,
+                       0,
+                       1
+                    ]
+                 ]
+              }
+           }
+        ],
+        "source": "owner",
+        "order": 2
       }
     },
-    "output": 
+    "output":
     {
-      "regressions": 
+      "regressions":
       {
         "label": "Regressions",
         "type": "array",
-        "items": 
+        "items":
         {
           "ROI": {"label": "Region of Interest","type": "string"},
-          "global_stats": 
+          "global_stats":
           {
             "label": "Global Stats",
             "type": "object",
-            "items": 
+            "items":
             {
-              "parameter_estimates": 
+              "parameter_estimates":
               {
                 "label": "Parameter Estimates",
                 "type": "object",
-                "items": 
+                "items":
                 {
                   "sigmasquared": {"label": "sigmasquared","type": "array"},
                   "CovRandomEffects": {"label": "CovRandomEffects","type": "array"}
                 }
               },
-              "inference_statistics": 
+              "inference_statistics":
               {
                 "label": "Inference Statistics",
                 "type": "object",
-                "items": 
+                "items":
                 {
                   "llh": {"label": "Log Likelihood","type": "number"},
                   "resms": {"label": "Residual Mean Squares","type": "number"},
@@ -94,7 +141,7 @@
                   {
                     "label": "Contrasts",
                     "type": "object",
-                    "items": 
+                    "items":
                     {
                       "T-Contrasts":
                       {
@@ -131,27 +178,27 @@
               }
             }
           },
-          "local_stats": 
+          "local_stats":
           {
             "label": "Local Stats",
             "type": "object",
             "items":
             {
-              "parameter_estimates": 
+              "parameter_estimates":
               {
                 "label": "Parameter Estimates",
                 "type": "object",
-                "items": 
+                "items":
                 {
                   "sigmasquared": {"label": "sigmasquared","type": "array"},
                   "CovRandomEffects": {"label": "CovRandomEffects","type": "array"}
                 }
               },
-              "inference_statistics": 
+              "inference_statistics":
               {
                 "label": "Inference Statistics",
                 "type": "object",
-                "items": 
+                "items":
                 {
                   "llh": {"label": "Log Likelihood","type": "number"},
                   "resms": {"label": "Residual Mean Squares","type": "number"},
@@ -160,7 +207,7 @@
                   {
                     "label": "Contrasts",
                     "type": "object",
-                    "items": 
+                    "items":
                     {
                       "T-Contrasts":
                       {
@@ -199,6 +246,9 @@
           }
         }
       }
+    },
+    "display": {
+      "type": "table"
     }
   }
 }

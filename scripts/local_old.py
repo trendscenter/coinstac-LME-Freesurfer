@@ -19,8 +19,6 @@ import os
 import pandas as pd
 import npMatrix3d
 import itertools
-import fslparser
-from fslparser import parsers
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -80,25 +78,15 @@ def local_0(args):
     inputdir = state_list['baseDirectory']
     cache_dir = state_list["cacheDirectory"]
 
-    (covariates, interests) = parsers.fsl_parser(args)
-
-    covariates['files'] = covariates.index
-    interests['files'] = interests.index
-
-    df = pd.merge(
-        covariates, interests, on='files', how='inner', validate='one_to_one'
-    )
-
-    covariates = covariates.drop(['files'], axis=1)
-
-    fc = covariates
-    fs_vars = interests
-    dep = df.files.to_list()
-
-    rf = covariates.site.to_list()
-    rc = covariates.site.to_list()
+    fc = input_list['fixed_covariates']
+    fs_vars = input_list['freesurfer_variables']
+    dep = input_list['dependents']
+    rf = input_list['random_factor']
+    rc = input_list['random_covariates']
 
     [X,Y,Z,ranfac,raneffs] = form_XYZMatrices(inputdir,fc,fs_vars,dep,rf,rc)
+
+    raise Exception(Z)
 
     XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ = prodMats3D(X,Y,Z)
 
@@ -125,9 +113,6 @@ def local_0(args):
     saveBin(os.path.join(cache_dir, 'X.npy'), X)
     saveBin(os.path.join(cache_dir, 'Y.npy'), Y)
 
-
-    fs_vars = fs_vars.drop(['files'], axis=1)
-
     computation_output_dict = {
         'output':
         {
@@ -139,8 +124,8 @@ def local_0(args):
         {
             'X': 'X.npy',
             'Y': 'Y.npy',
-            'fs_vars': fs_vars.columns.tolist(),
-            'ranfac': ranfac,
+            'fs_vars': fs_vars,
+            'ranfac': ranfac.tolist(),
             'raneffs': raneffs,
             'contrasts': contrasts,
             'paramVec_local': dict_list
