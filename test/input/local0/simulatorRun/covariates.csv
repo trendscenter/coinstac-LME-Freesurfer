@@ -1,0 +1,12 @@
+freesurferfiles,age,isControl,site_number
+site0_subject0_aseg_stats.txt,22.0,FALSE,1
+site0_subject1_aseg_stats.txt,47.0,TRUE,1
+site0_subject2_aseg_stats.txt,56.0,FALSE,1
+site1_subject0_aseg_stats.txt,53.0,TRUE,2
+site1_subject1_aseg_stats.txt,21.0,FALSE,2
+site1_subject2_aseg_stats.txt,38.0,TRUE,2
+site1_subject3_aseg_stats.txt,49.0,TRUE,2
+site2_subject0_aseg_stats.txt,65.0,TRUE,3
+site2_subject1_aseg_stats.txt,59.0,TRUE,3
+site2_subject2_aseg_stats.txt,39.0,FALSE,3
+site2_subject3_aseg_stats.txt,45.0,FALSE,3

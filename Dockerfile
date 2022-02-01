@@ -1,4 +1,4 @@
-FROM coinstac/coinstac-base-python-stream
+FROM coinstacteam/coinstac-base:python3.7-buster-slim
 
 # Set the working directory
 WORKDIR /computation

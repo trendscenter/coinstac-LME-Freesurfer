@@ -1,3 +1,4 @@
 scipy
 statsmodels
 nibabel
+fslparser==0.0.2

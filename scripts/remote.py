@@ -28,7 +28,7 @@ each local site
 ----------------------------------------------------------------------------
 This function takes in the following inputs in args['input']:
 ----------------------------------------------------------------------------
-- nlevels : list containing number of levels for each random factor, as we 
+- nlevels : list containing number of levels for each random factor, as we
     have only one random factor, nlevels is a single value
 - nobservns : number of observations per local site
 - computation_phase : local_0
@@ -36,7 +36,7 @@ This function takes in the following inputs in args['input']:
 And gives the following output:
 ----------------------------------------------------------------------------
 - output :
-    nlevels_persite : list containing number of levels of random factor for 
+    nlevels_persite : list containing number of levels of random factor for
     each site
     nlevels_global : total levels summed up for all local sites
     nlocalsites : number of local sites
@@ -48,19 +48,19 @@ And gives the following output:
 """
 def remote_0(args):
     input_list = args['input']
-    
+
     nlevels_persite = [input_list[site]['nlevels'] for site in input_list]
     nlevels_global = np.sum(np.array(nlevels_persite))
     nobservns = [input_list[site]['nobservns'] for site in input_list]
     nobservns_global = np.sum(np.array(nobservns))
-    
+
     computation_output_dict = {
-        'cache': 
+        'cache':
         {
             'nlevels_global': nlevels_global.tolist(),
             'nobservns_global': nobservns_global.tolist(),
         },
-        'output': 
+        'output':
         {
             'nlevels_persite': nlevels_persite,
             'nlevels_global': nlevels_global.tolist(),
@@ -75,7 +75,7 @@ def remote_0(args):
 """
 ============================================================================
 The below function does the following tasks
-1. solves LME model using pseudo Simplified Fisher Scoring algorithm for 
+1. solves LME model using pseudo Simplified Fisher Scoring algorithm for
 aggregate data to find global parameter estimates
 2. calculate global inference parameters
 ----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ def remote_1(args):
     state_list = args['state']
     input_list = args['input']
     cache_list = args['cache']
-    
+
     input_dir = state_list["baseDirectory"]
 
     prod_matrices = ['XtransposeX_local','XtransposeY_local','XtransposeZ_local',
@@ -136,21 +136,21 @@ def remote_1(args):
     ZtX = prod_matrices_vars[6]
     ZtY = prod_matrices_vars[7]
     ZtZ = prod_matrices_vars[8]
-    
+
     nlevels_global = np.array([cache_list['nlevels_global']])
     nobservns_global = cache_list['nobservns_global']
     tol = 1e-6
     nraneffs = np.array([1])
-    
+
     # Run Pseudo Simplified Fisher Scoring
-    paramVec = reg.pSFS3D(XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ,  
+    paramVec = reg.pSFS3D(XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ,
                             nlevels_global,nraneffs,tol,nobservns_global)
-    
+
     nfixeffs = np.shape(XtX)[1]
     ndepvars = np.shape(XtY)[0]
     [beta,sigma2,vechD,D] = get_parameterestimates(paramVec,nfixeffs,ndepvars,
                                                                 nlevels_global,nraneffs)
-                                                                
+
     prod_matrices = [XtX, XtY, XtZ, YtX, YtY, YtZ, ZtX, ZtY, ZtZ]
     contrasts = [input_list[site]['contrasts'] for site in input_list]
     con = contrasts[0]
@@ -178,11 +178,12 @@ def remote_1(args):
 if __name__ == '__main__':
 
     parsed_args = json.loads(sys.stdin.read())
+    phase_key = list(list_recursive(parsed_args, 'computation_phase'))
 
-    if parsed_args['input']['local0']['computation_phase'] == 'local_0':
+    if 'local_0' in phase_key:
         computation_output = remote_0(parsed_args)
         sys.stdout.write(computation_output)
-    elif parsed_args['input']['local0']['computation_phase'] == 'local_1':
+    elif 'local_1' in phase_key:
         computation_output = remote_1(parsed_args)
         sys.stdout.write(computation_output)
     else:

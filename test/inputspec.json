@@ -1,86 +1,111 @@
 [
-    {
-        "fixed_covariates":
-        { "value": "local0_fixed_covariates.csv" },
-        
-        "random_covariates":
-        { "value": "local0_random_covariates.csv" },
-
-        "random_factor":
-        { "value": "local0_random_factor.csv" },
-
-        "dependents":
-        { "value": "local0_dependents.csv" },
-
-        "freesurfer_variables":
-        {"value": ["Left-Lateral-Ventricle","Left-Inf-Lat-Vent",
-                    "Left-Cerebellum-White-Matter","3rd-Ventricle",
-                    "Left-Cerebellum-Cortex","4th-Ventricle",
-                    "5th-Ventricle"]},
-        
-        "contrasts":
-        {
-            "value":
-            [
-                {
-                "name": {"value": "contrast1"},
-                "vector": {"value": [1,0,0]}
-                },
-                {
-                "name": {"value": "contrast2"},
-                "vector": {"value": [0,1,0]}
-                },
-                {
-                "name": {"value": "contrast3"},
-                "vector": {"value": [0,0,1]}
-                },
-                {
-                "name": {"value": "contrast4"},
-                "vector": {"value": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
-                }
-            ]
-        }
-    },
-    {
-        "fixed_covariates":
-        { "value": "local1_fixed_covariates.csv" },
-        
-        "random_covariates":
-        { "value": "local1_random_covariates.csv" },
-
-        "random_factor":
-        { "value": "local1_random_factor.csv" },
-
-        "dependents":
-        { "value": "local1_dependents.csv" },
-
-        "freesurfer_variables":
-        {"value": ["Left-Lateral-Ventricle","Left-Inf-Lat-Vent",
-            "Left-Cerebellum-White-Matter","3rd-Ventricle",
-            "Left-Cerebellum-Cortex","4th-Ventricle",
-            "5th-Ventricle"]},
-            
-        "contrasts":
-        {
-            "value":
-            [
-                {
-                "name": {"value": "contrast1"},
-                "vector": {"value": [1,0,0]}
-                },
-                {
-                "name": {"value": "contrast2"},
-                "vector": {"value": [0,1,0]}
-                },
-                {
-                "name": {"value": "contrast3"},
-                "vector": {"value": [0,0,1]}
-                },
-                {
-                "name": {"value": "contrast4"},
-                "vector": {"value": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
-                }
-            ]
-        }
-    }
+	{
+	"covariates":{
+	 "value": {
+     "site0_subject0_aseg_stats.txt":{"age": "22.0","isControl":"FALSE","site":"1"},
+     "site0_subject1_aseg_stats.txt":{"age": "47.0","isControl":"TRUE","site":"1"},
+     "site0_subject2_aseg_stats.txt":{"age": "56.0","isControl":"FALSE","site":"1"},
+     "site1_subject0_aseg_stats.txt":{"age": "53.0","isControl":"TRUE","site":"2"},
+     "site1_subject1_aseg_stats.txt":{"age": "21.0","isControl":"FALSE","site":"2"},
+     "site1_subject2_aseg_stats.txt":{"age": "38.0","isControl":"TRUE","site":"2"},
+     "site1_subject3_aseg_stats.txt":{"age": "49.0","isControl":"TRUE","site":"2"},
+     "site2_subject0_aseg_stats.txt":{"age": "65.0","isControl":"TRUE","site":"3"},
+     "site2_subject1_aseg_stats.txt":{"age": "59.0","isControl":"TRUE","site":"3"},
+     "site2_subject2_aseg_stats.txt":{"age": "39.0","isControl":"FALSE","site":"3"},
+     "site2_subject3_aseg_stats.txt":{"age": "45.0","isControl":"FALSE","site":"3"}
+	}},
+	  "data":{
+    "fulfilled":true,
+    "value":[
+       {
+          "type":"FreeSurfer",
+          "value":[
+            "Left-Lateral-Ventricle",
+            "Left-Inf-Lat-Vent",
+            "Left-Cerebellum-White-Matter",
+            "3rd-Ventricle",
+            "Left-Cerebellum-Cortex",
+            "4th-Ventricle",
+            "5th-Ventricle"
+          ]
+       }
+    ]
+  },
+  "contrasts":
+  {
+      "value":
+      [
+          {
+          "name": {"value": "contrast1"},
+          "vector": {"value": [1,0,0]}
+          },
+          {
+          "name": {"value": "contrast2"},
+          "vector": {"value": [0,1,0]}
+          },
+          {
+          "name": {"value": "contrast3"},
+          "vector": {"value": [0,0,1]}
+          },
+          {
+          "name": {"value": "contrast4"},
+          "vector": {"value": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
+          }
+      ]
+  }
+},
+{
+	"covariates":{
+	 "value": {
+     "site0_subject0_aseg_stats.txt":{"age": "36.0","isControl":"TRUE","site":"1"},
+     "site0_subject1_aseg_stats.txt":{"age": "65.0","isControl":"FALSE","site":"1"},
+     "site0_subject2_aseg_stats.txt":{"age": "45.0","isControl":"TRUE","site":"1"},
+     "site0_subject3_aseg_stats.txt":{"age": "50.0","isControl":"TRUE","site":"1"},
+     "site0_subject4_aseg_stats.txt":{"age": "21.0","isControl":"FALSE","site":"1"},
+     "site1_subject0_aseg_stats.txt":{"age": "66.0","isControl":"TRUE","site":"2"},
+     "site1_subject1_aseg_stats.txt":{"age": "60.0","isControl":"TRUE","site":"2"},
+     "site1_subject2_aseg_stats.txt":{"age": "48.0","isControl":"FALSE","site":"2"},
+     "site1_subject3_aseg_stats.txt":{"age": "27.0","isControl":"FALSE","site":"2"},
+     "site1_subject4_aseg_stats.txt":{"age": "60.0","isControl":"TRUE","site":"2"}
+	}},
+	"data":{
+    "fulfilled":true,
+    "value":[
+       {
+          "type":"FreeSurfer",
+          "value":[
+            "Left-Lateral-Ventricle",
+            "Left-Inf-Lat-Vent",
+            "Left-Cerebellum-White-Matter",
+            "3rd-Ventricle",
+            "Left-Cerebellum-Cortex",
+            "4th-Ventricle",
+            "5th-Ventricle"
+          ]
+       }
+    ]
+  },
+  "contrasts":
+  {
+      "value":
+      [
+          {
+          "name": {"value": "contrast1"},
+          "vector": {"value": [1,0,0]}
+          },
+          {
+          "name": {"value": "contrast2"},
+          "vector": {"value": [0,1,0]}
+          },
+          {
+          "name": {"value": "contrast3"},
+          "vector": {"value": [0,0,1]}
+          },
+          {
+          "name": {"value": "contrast4"},
+          "vector": {"value": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
+          }
+      ]
+  }
+}
 ]
