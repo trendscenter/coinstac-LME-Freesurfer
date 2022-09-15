@@ -4228,4 +4228,4 @@ The full result is displayed in the UI as an object string:
 
 As shown here:
 
-![Results View](https://raw.githubusercontent.com/trendscenter/coinstac-VBM-freesurfer/main/test/results/results.png "Results View")
+![Results View](https://raw.githubusercontent.com/trendscenter/coinstac-LME-Freesurfer/master/test/results/results.png "Results View")
